@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import mapboxgl from 'mapbox-gl';
 import './App.css';
+import GeoHashs from './GeoHashs';
 
 function RadioBtn(props) {
   return (
@@ -28,11 +29,12 @@ class App extends Component {
         .google
         .maps
         .Map(document.getElementById('googlemaps'), {
-          zoom: 14,
+          zoom: 16,
           center: {
             lat: 12.950488,
             lng: 77.641877
-          }
+          },
+          zoomControl: true
         }),
       mapbox: new mapboxgl.Map({
         container: 'mapboxmaps',
@@ -40,9 +42,56 @@ class App extends Component {
         center: [
           77.641877, 12.950488
         ], // starting position
-        zoom: 14 // starting zoom
+        zoom: 15, // starting zoom
+        interactive: false
       })
     };
+  }
+
+  displayMap(mapname) {
+    switch (mapname) {
+      case "google":
+        {
+          document
+            .getElementById('googlemaps')
+            .style
+            .display = "block";
+          document
+            .getElementById('mapboxmaps')
+            .style
+            .display = "none";
+          return;
+        }
+      case "mapbox":
+        {
+          document
+            .getElementById('googlemaps')
+            .style
+            .display = "none";
+          document
+            .getElementById('mapboxmaps')
+            .style
+            .display = "block";
+          var center = this
+            .state
+            .google
+            .getCenter();
+          this
+            .state
+            .mapbox
+            .setCenter([
+              center.lng(),
+              center.lat()
+            ]);
+          this
+            .state
+            .mapbox
+            .setZoom(this.state.google.zoom - 1);
+          return;
+        }
+      default:
+        alert("Invalid mapname!");
+    }
   }
 
   selectMap(mapname) {
@@ -50,20 +99,24 @@ class App extends Component {
   }
 
   render() {
+    this.displayMap(this.state.chosen_map);
     return (
-      <div className="Choose-Map">
-        <RadioBtn
-          value="google"
-          name="maptype"
-          text="Google Maps"
-          selected={this.state.chosen_map}
-          onChange={() => this.selectMap("google")}/>
-        <RadioBtn
-          value="mapbox"
-          name="maptype"
-          text="Mapbox Maps"
-          selected={this.state.chosen_map}
-          onChange={() => this.selectMap("mapbox")}/>
+      <div>
+        <GeoHashs googlemaps={this.state.google}/>
+        <div className="Choose-Map">
+          <RadioBtn
+            value="google"
+            name="maptype"
+            text="Google Maps"
+            selected={this.state.chosen_map}
+            onChange={() => this.selectMap("google")}/>
+          <RadioBtn
+            value="mapbox"
+            name="maptype"
+            text="Mapbox Maps"
+            selected={this.state.chosen_map}
+            onChange={() => this.selectMap("mapbox")}/>
+        </div>
       </div>
     );
   }
