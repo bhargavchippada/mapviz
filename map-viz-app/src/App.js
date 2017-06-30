@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import mapboxgl from 'mapbox-gl';
 import './App.css';
 import GeoHashs from './GeoHashs';
+import FeaturesNav from './FeaturesNav.js';
 
 function RadioBtn(props) {
   return (
@@ -25,6 +27,7 @@ class App extends Component {
 
     this.state = {
       chosen_map: 'google',
+      chosen_feature: 'geohashs',
       google: new window
         .google
         .maps
@@ -96,6 +99,19 @@ class App extends Component {
 
   selectMap(mapname) {
     this.setState({chosen_map: mapname});
+  }
+
+  selectFeature(feature) {
+    this.setState({chosen_feature: feature});
+  }
+
+  componentDidMount() {
+    ReactDOM.render(
+      <FeaturesNav
+      feature={this.state.chosen_feature}
+      selectFeature={this
+      .selectFeature
+      .bind(this)}/>, document.getElementById('actionbar'));
   }
 
   render() {

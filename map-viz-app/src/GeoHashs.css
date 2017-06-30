@@ -1,9 +1,10 @@
 .GeoHashs-Div {
-    position:absolute;
+    position:relative;
     background-color:rgba(255, 255, 255, 0.8);
     padding: 12px;
     top: 64px;
     left: 0;
     margin: 8px;
     text-align:center;
+    float: left;
 }

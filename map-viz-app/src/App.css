@@ -1,12 +1,8 @@
 .Choose-Map {
-  position:absolute;
+  position:relative;
   background-color:rgba(255, 255, 255, 0.8);
   padding: 12px;
   right: 0;
   margin: 8px;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  float: right;
 }

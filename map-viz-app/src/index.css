@@ -4,16 +4,16 @@ body {
   font-family: sans-serif;
 }
 
-#mapboxmaps {
-  position:absolute;
-  top:0;
-  bottom:0;
+#actionbar {
+  position: absolute;
   width:100%;
+  top: 0;
+  height: 48px;
 }
 
-#googlemaps {
+.app-content {
   position:absolute;
-  top:0;
+  top:48px;
   bottom:0;
   width:100%;
 }
