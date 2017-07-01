@@ -151,6 +151,11 @@ class GeoHashs extends Component {
 
     removeGeomsFromMap() {
         // Remove currently plotted geohashs from map
+
+        if (info_window !== null) {
+            info_window.close();
+        }
+
         for (var ind = 0; ind < this.state.geohashsL.length; ind++) {
             this
                 .state
@@ -167,7 +172,7 @@ class GeoHashs extends Component {
     }
 
     updateInputValue(evt) {
-        this.setState({geohashs: evt.target.value});
+        this.state.pointsTxt = evt.target.value;
     }
 
     render() {
