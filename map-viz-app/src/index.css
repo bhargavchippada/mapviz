@@ -17,3 +17,9 @@ body {
   bottom:0;
   width:100%;
 }
+
+#root {
+  position:absolute;
+  top:48px;
+  width:100%;
+}
