@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import mapboxgl from 'mapbox-gl';
 import './App.css';
-import GeoHashs from './GeoHashs';
 import FeaturesNav from './FeaturesNav.js';
+import Features from './Features.js';
 
 function RadioBtn(props) {
   return (
@@ -118,7 +118,7 @@ class App extends Component {
     this.displayMap(this.state.chosen_map);
     return (
       <div>
-        <GeoHashs googlemaps={this.state.google}/>
+        <Features googlemaps={this.state.google} feature={this.state.chosen_feature}/>
         <div className="Choose-Map">
           <RadioBtn
             value="google"

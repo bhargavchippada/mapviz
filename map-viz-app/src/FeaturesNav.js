@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-require('bootstrap/dist/css/bootstrap.min.css');
 
 class FeaturesNav extends Component {
     constructor(props) {
@@ -18,10 +17,12 @@ class FeaturesNav extends Component {
     }
 
     selectFeature(feature) {
-        this
-            .props
-            .selectFeature(feature);
-        this.setState({feature: feature});
+        if (this.state.feature !== feature) {
+            this
+                .props
+                .selectFeature(feature);
+            this.setState({feature: feature});
+        }
     }
 
     actionTab(feature, featureTxt) {
