@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './GeoHashs.css';
 import Geohash from 'latlon-geohash';
-import './maplabel.js';
+import '../../libraries/maplabel.js';
 
 var info_window;
 var googlemaps;
@@ -172,7 +172,7 @@ class GeoHashs extends Component {
     }
 
     updateInputValue(evt) {
-        this.state.pointsTxt = evt.target.value;
+        this.state.geohashs = evt.target.value;
     }
 
     render() {

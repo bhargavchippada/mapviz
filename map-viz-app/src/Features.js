@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import GeoHashs from './components/GeoHashs.js';
-import Bearings from './components/Bearings.js';
+import GeoHashs from './components/GeoHashs/GeoHashs.js';
+import Bearings from './components/Bearings/Bearings.js';
 
 class Features extends Component {
 
