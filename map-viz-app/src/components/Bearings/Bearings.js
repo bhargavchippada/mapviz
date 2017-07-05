@@ -6,10 +6,7 @@ var googlemaps;
 class Bearings extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            pointsTxt: "12.946077,77.647268,0\n12.951380,77.639756,180",
-            markersL: []
-        }
+        this.state = this.props.state;
         info_window = new window
             .google
             .maps
@@ -93,17 +90,15 @@ class Bearings extends Component {
         }
 
         // set state and plot new geoms on map
-        this.setState({
-            markersL: markersL
-        }, this.plotGeomsOnMap);
+        this.state.markersL = markersL;
+        this.plotGeomsOnMap();
     }
 
     renderNewPoints() {
         this.removeGeomsFromMap();
         // clear the geoms from state
-        this.setState({
-            markersL: []
-        }, this.parseAndPlotNewPoints);
+        this.state.markersL = [];
+        this.parseAndPlotNewPoints();
     }
 
     removeGeomsFromMap() {
@@ -125,29 +120,31 @@ class Bearings extends Component {
         this.state.pointsTxt = evt.target.value;
     }
 
+    componentWillUnmount() {
+        this.removeGeomsFromMap();
+        this
+            .props
+            .updateState(this.props.name, this.state);
+    }
+
     render() {
-        if (this.props.name === this.props.feature) {
-            this.plotGeomsOnMap();
-            return (
-                <div className="Bearings-Div">
-                    <h4>Lat,Lng,Bearing</h4>
-                    <textarea
-                        rows="10"
-                        cols="32"
-                        defaultValue={this.state.pointsTxt}
-                        onChange={evt => this.updateInputValue(evt)}></textarea>
-                    <div>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={() => this.renderNewPoints()}>plot</button>
-                    </div>
+        this.plotGeomsOnMap();
+        return (
+            <div className="Bearings-Div">
+                <h4>Lat,Lng,Bearing</h4>
+                <textarea
+                    rows="10"
+                    cols="32"
+                    defaultValue={this.state.pointsTxt}
+                    onChange={evt => this.updateInputValue(evt)}></textarea>
+                <div>
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => this.renderNewPoints()}>plot</button>
                 </div>
-            )
-        } else {
-            this.removeGeomsFromMap();
-            return null;
-        }
+            </div>
+        )
 
     }
 }

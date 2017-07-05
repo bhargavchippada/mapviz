@@ -8,11 +8,7 @@ var googlemaps;
 class GeoHashs extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            geohashs: "tdr1wv9\ntdr1wd6",
-            geohashsL: [],
-            geohashLabelsL: []
-        }
+        this.state = this.props.state;
         info_window = new window
             .google
             .maps
@@ -134,19 +130,17 @@ class GeoHashs extends Component {
         }
 
         // set state and plot new geoms on map
-        this.setState({
-            geohashsL: geohashsL,
-            geohashLabelsL: geohashLabelsL
-        }, this.plotGeomsOnMap);
+        this.state.geohashsL = geohashsL;
+        this.state.geohashLabelsL = geohashLabelsL;
+        this.plotGeomsOnMap();
     }
 
     renderNewGeoHashs() {
         this.removeGeomsFromMap();
         // clear the geoms from state
-        this.setState({
-            geohashsL: [],
-            geohashLabelsL: []
-        }, this.parseAndPlotNewGeoHashs);
+        this.state.geohashsL = [];
+        this.state.geohashLabelsL = [];
+        this.parseAndPlotNewGeoHashs();
     }
 
     removeGeomsFromMap() {
@@ -175,30 +169,31 @@ class GeoHashs extends Component {
         this.state.geohashs = evt.target.value;
     }
 
-    render() {
-        if (this.props.name === this.props.feature) {
-            this.plotGeomsOnMap();
-            return (
-                <div className="GeoHashs-Div">
-                    <h4>Geohashs</h4>
-                    <textarea
-                        rows="10"
-                        cols="16"
-                        defaultValue={this.state.geohashs}
-                        onChange={evt => this.updateInputValue(evt)}></textarea>
-                    <div>
-                        <button
-                            type="button"
-                            className="btn btn-primary btn-sm"
-                            onClick={() => this.renderNewGeoHashs()}>plot geohashs</button>
-                    </div>
-                </div>
-            )
-        } else {
-            this.removeGeomsFromMap();
-            return null;
-        }
+    componentWillUnmount() {
+        this.removeGeomsFromMap();
+        this
+            .props
+            .updateState(this.props.name, this.state);
+    }
 
+    render() {
+        this.plotGeomsOnMap();
+        return (
+            <div className="GeoHashs-Div">
+                <h4>Geohashs</h4>
+                <textarea
+                    rows="10"
+                    cols="16"
+                    defaultValue={this.state.geohashs}
+                    onChange={evt => this.updateInputValue(evt)}></textarea>
+                <div>
+                    <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={() => this.renderNewGeoHashs()}>plot geohashs</button>
+                </div>
+            </div>
+        )
     }
 }
 export default GeoHashs;
