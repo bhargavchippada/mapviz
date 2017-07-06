@@ -38,7 +38,7 @@ class FeaturesNav extends Component {
     render() {
         return (
             <ul className="nav nav-tabs">
-                {this.actionTab("geohashs", "GeoHashs")}
+                {this.actionTab("geohashes", "GeoHashes")}
                 {this.actionTab("bearings", "Bearings")}
             </ul>
         );

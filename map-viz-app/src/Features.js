@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import GeoHashs from './components/GeoHashs/GeoHashs.js';
+import GeoHashes from './components/GeoHashes/GeoHashes.js';
 import Bearings from './components/Bearings/Bearings.js';
 
 class Features extends Component {
@@ -7,9 +7,9 @@ class Features extends Component {
     constructor(props) {
         super(props);
 
-        this.geohashs_vars = {
-            geohashs: "tdr1wv9\ntdr1wd6",
-            geohashsL: [],
+        this.geohashes_vars = {
+            geohashes: "tdr1wv9\ntdr1wd6",
+            geohashesL: [],
             geohashLabelsL: []
         };
 
@@ -29,8 +29,8 @@ class Features extends Component {
     render() {
         return (
             <div>
-                {this.props.feature === "geohashs"
-                    ? <GeoHashs vars={this.geohashs_vars} googlemaps={this.props.googlemaps}/>
+                {this.props.feature === "geohashes"
+                    ? <GeoHashes vars={this.geohashes_vars} googlemaps={this.props.googlemaps}/>
                     : null}
                 {this.props.feature === "bearings"
                     ? <Bearings vars={this.bearings_vars} googlemaps={this.props.googlemaps}/>

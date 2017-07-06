@@ -27,7 +27,7 @@ class App extends Component {
 
     this.state = {
       chosen_map: 'google',
-      chosen_feature: 'geohashs',
+      chosen_feature: 'geohashes',
       google: new window
         .google
         .maps

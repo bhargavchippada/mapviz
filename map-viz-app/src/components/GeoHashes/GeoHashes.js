@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import './GeoHashs.css';
+import './GeoHashes.css';
 import Geohash from 'latlon-geohash';
 import '../../libraries/maplabel.js';
 
-class GeoHashs extends Component {
+class GeoHashes extends Component {
     constructor(props) {
         super(props);
         this.vars = this.props.vars;
@@ -14,7 +14,7 @@ class GeoHashs extends Component {
     }
 
     plotGeomsOnMap() {
-        if (this.vars.geohashsL.length === 0) {
+        if (this.vars.geohashesL.length === 0) {
             return;
         }
         // View Bounds
@@ -22,10 +22,10 @@ class GeoHashs extends Component {
             .google
             .maps
             .LatLngBounds();
-        for (var ind = 0; ind < this.vars.geohashsL.length; ind++) {
+        for (var ind = 0; ind < this.vars.geohashesL.length; ind++) {
             var path = this
                 .vars
-                .geohashsL[ind]
+                .geohashesL[ind]
                 .getPath();
             for (var i = 0; i < path.getLength(); i++) {
                 vbounds.extend(path.getAt(i));
@@ -36,15 +36,15 @@ class GeoHashs extends Component {
             .googlemaps
             .fitBounds(vbounds);
 
-        // Plot Geohashs
-        for (ind = 0; ind < this.vars.geohashsL.length; ind++) {
+        // Plot GeoHashes
+        for (ind = 0; ind < this.vars.geohashesL.length; ind++) {
             this
                 .vars
-                .geohashsL[ind]
+                .geohashesL[ind]
                 .setMap(this.props.googlemaps);
         }
 
-        // Plot Geohashs Labels
+        // Plot GeoHashes Labels
         for (ind = 0; ind < this.vars.geohashLabelsL.length; ind++) {
             this
                 .vars
@@ -53,18 +53,18 @@ class GeoHashs extends Component {
         }
     }
 
-    parseAndPlotNewGeoHashs() {
-        // Now parse the new geohashs from textarea
-        var geohashs = this
+    parseAndPlotNewGeoHashes() {
+        // Now parse the new geohashes from textarea
+        var geohashes = this
             .vars
-            .geohashs
+            .geohashes
             .split("\n");
 
-        var geohashsL = [];
+        var geohashesL = [];
         var geohashLabelsL = [];
-        for (var index = 0; index < geohashs.length; index++) {
+        for (var index = 0; index < geohashes.length; index++) {
             try {
-                var gbounds = Geohash.bounds(geohashs[index]);
+                var gbounds = Geohash.bounds(geohashes[index]);
                 var paths = [
                     new window
                         .google
@@ -98,15 +98,15 @@ class GeoHashs extends Component {
                         strokeWeight: 1,
                         fillColor: '#FFA500',
                         fillOpacity: 0.4,
-                        name: geohashs[index]
+                        name: geohashes[index]
                     });
 
                 geohash.addListener('click', showInfo);
 
                 // Label for the geohash
-                var pcenter = Geohash.decode(geohashs[index]);
+                var pcenter = Geohash.decode(geohashes[index]);
                 var geohashLabel = new window.MapLabel({
-                    text: geohashs[index],
+                    text: geohashes[index],
                     position: new window
                         .google
                         .maps
@@ -115,7 +115,7 @@ class GeoHashs extends Component {
                     strokeWeight: 2
                 });
 
-                geohashsL.push(geohash);
+                geohashesL.push(geohash);
                 geohashLabelsL.push(geohashLabel);
             } catch (e) {
                 alert('An error has occurred: ' + e.message);
@@ -136,31 +136,31 @@ class GeoHashs extends Component {
         }
 
         // set vars and plot new geoms on map
-        this.vars.geohashsL = geohashsL;
+        this.vars.geohashesL = geohashesL;
         this.vars.geohashLabelsL = geohashLabelsL;
         this.plotGeomsOnMap();
     }
 
-    renderNewGeoHashs() {
+    renderNewGeoHashes() {
         this.removeGeomsFromMap();
         // clear the geoms
-        this.vars.geohashsL = [];
+        this.vars.geohashesL = [];
         this.vars.geohashLabelsL = [];
-        this.parseAndPlotNewGeoHashs();
+        this.parseAndPlotNewGeoHashes();
     }
 
     removeGeomsFromMap() {
-        // Remove currently plotted geohashs from map
+        // Remove currently plotted geohashes from map
 
         if (this.info_window !== null) {
             this
                 .info_window
                 .close();
         }
-        for (var ind = 0; ind < this.vars.geohashsL.length; ind++) {
+        for (var ind = 0; ind < this.vars.geohashesL.length; ind++) {
             this
                 .vars
-                .geohashsL[ind]
+                .geohashesL[ind]
                 .setMap(null);
         }
 
@@ -173,7 +173,7 @@ class GeoHashs extends Component {
     }
 
     updateInputValue(evt) {
-        this.vars.geohashs = evt.target.value;
+        this.vars.geohashes = evt.target.value;
     }
 
     componentDidMount() {
@@ -186,21 +186,21 @@ class GeoHashs extends Component {
 
     render() {
         return (
-            <div className="GeoHashs-Div">
-                <h4>Geohashs</h4>
+            <div className="GeoHashes-Div">
+                <h4>GeoHashes</h4>
                 <textarea
                     rows="10"
                     cols="16"
-                    defaultValue={this.vars.geohashs}
+                    defaultValue={this.vars.geohashes}
                     onChange={evt => this.updateInputValue(evt)}></textarea>
                 <div>
                     <button
                         type="button"
                         className="btn btn-primary btn-sm"
-                        onClick={() => this.renderNewGeoHashs()}>plot geohashs</button>
+                        onClick={() => this.renderNewGeoHashes()}>plot geohashes</button>
                 </div>
             </div>
         )
     }
 }
-export default GeoHashs;
+export default GeoHashes;
