@@ -1,21 +1,18 @@
 import React, {Component} from 'react';
 import './Bearings.css';
 
-var info_window;
-var googlemaps;
 class Bearings extends Component {
     constructor(props) {
         super(props);
-        this.state = this.props.state;
-        info_window = new window
+        this.vars = this.props.vars;
+        this.info_window = new window
             .google
             .maps
             .InfoWindow();
-        googlemaps = props.googlemaps;
     }
 
     plotGeomsOnMap() {
-        if (this.state.markersL.length === 0) {
+        if (this.vars.markersL.length === 0) {
             return;
         }
         // View Bounds
@@ -23,24 +20,27 @@ class Bearings extends Component {
             .google
             .maps
             .LatLngBounds();
-        for (var ind = 0; ind < this.state.markersL.length; ind++) {
-            vbounds.extend(this.state.markersL[ind].getPosition());
+        for (var ind = 0; ind < this.vars.markersL.length; ind++) {
+            vbounds.extend(this.vars.markersL[ind].getPosition());
         }
-        googlemaps.fitBounds(vbounds);
+        this
+            .props
+            .googlemaps
+            .fitBounds(vbounds);
 
         // Plot Markers
-        for (var ind = 0; ind < this.state.markersL.length; ind++) {
+        for (ind = 0; ind < this.vars.markersL.length; ind++) {
             this
-                .state
+                .vars
                 .markersL[ind]
-                .setMap(googlemaps);
+                .setMap(this.props.googlemaps);
         }
     }
 
     parseAndPlotNewPoints() {
         // Now parse the new points from textarea
         var points = this
-            .state
+            .vars
             .pointsTxt
             .split("\n");
 
@@ -84,58 +84,69 @@ class Bearings extends Component {
 
         function showInfo(event) {
             var contentString = '<b>' + this.title + '</b>';
-            info_window.setContent(contentString);
-            info_window.setPosition(event.latLng);
-            info_window.open(googlemaps);
+            this
+                .info_window
+                .setContent(contentString);
+            this
+                .info_window
+                .setPosition(event.latLng);
+            this
+                .info_window
+                .open(this.props.googlemaps);
         }
 
-        // set state and plot new geoms on map
-        this.state.markersL = markersL;
+        // set vars and plot new geoms on map
+        this.vars.markersL = markersL;
         this.plotGeomsOnMap();
     }
 
     renderNewPoints() {
         this.removeGeomsFromMap();
-        // clear the geoms from state
-        this.state.markersL = [];
+        // clear the geoms
+        this.vars.markersL = [];
         this.parseAndPlotNewPoints();
     }
 
     removeGeomsFromMap() {
         // Remove currently plotted Markers from map
 
-        if (info_window !== null) {
-            info_window.close();
+        if (this.info_window !== null) {
+            this
+                .info_window
+                .close();
         }
 
-        for (var ind = 0; ind < this.state.markersL.length; ind++) {
+        for (var ind = 0; ind < this.vars.markersL.length; ind++) {
             this
-                .state
+                .vars
                 .markersL[ind]
                 .setMap(null);
         }
     }
 
     updateInputValue(evt) {
-        this.state.pointsTxt = evt.target.value;
+        this.vars.pointsTxt = evt.target.value;
+    }
+
+    componentDidMount() {
+        this.plotGeomsOnMap();
     }
 
     componentWillUnmount() {
         this.removeGeomsFromMap();
         this
             .props
-            .updateState(this.props.name, this.state);
+            .updateVars(this.props.name, this.vars);
     }
 
     render() {
-        this.plotGeomsOnMap();
         return (
             <div className="Bearings-Div">
                 <h4>Lat,Lng,Bearing</h4>
                 <textarea
                     rows="10"
                     cols="32"
-                    defaultValue={this.state.pointsTxt}
+                    defaultValue={this.vars.pointsTxt}
                     onChange={evt => this.updateInputValue(evt)}></textarea>
                 <div>
                     <button

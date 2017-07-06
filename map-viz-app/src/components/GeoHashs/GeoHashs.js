@@ -3,21 +3,18 @@ import './GeoHashs.css';
 import Geohash from 'latlon-geohash';
 import '../../libraries/maplabel.js';
 
-var info_window;
-var googlemaps;
 class GeoHashs extends Component {
     constructor(props) {
         super(props);
-        this.state = this.props.state;
-        info_window = new window
+        this.vars = this.props.vars;
+        this.info_window = new window
             .google
             .maps
             .InfoWindow();
-        googlemaps = props.googlemaps;
     }
 
     plotGeomsOnMap() {
-        if (this.state.geohashsL.length === 0) {
+        if (this.vars.geohashsL.length === 0) {
             return;
         }
         // View Bounds
@@ -25,38 +22,41 @@ class GeoHashs extends Component {
             .google
             .maps
             .LatLngBounds();
-        for (var ind = 0; ind < this.state.geohashsL.length; ind++) {
+        for (var ind = 0; ind < this.vars.geohashsL.length; ind++) {
             var path = this
-                .state
+                .vars
                 .geohashsL[ind]
                 .getPath();
             for (var i = 0; i < path.getLength(); i++) {
                 vbounds.extend(path.getAt(i));
             }
         }
-        googlemaps.fitBounds(vbounds);
+        this
+            .props
+            .googlemaps
+            .fitBounds(vbounds);
 
         // Plot Geohashs
-        for (var ind = 0; ind < this.state.geohashsL.length; ind++) {
+        for (ind = 0; ind < this.vars.geohashsL.length; ind++) {
             this
-                .state
+                .vars
                 .geohashsL[ind]
-                .setMap(googlemaps);
+                .setMap(this.props.googlemaps);
         }
 
         // Plot Geohashs Labels
-        for (var ind = 0; ind < this.state.geohashLabelsL.length; ind++) {
+        for (ind = 0; ind < this.vars.geohashLabelsL.length; ind++) {
             this
-                .state
+                .vars
                 .geohashLabelsL[ind]
-                .setMap(googlemaps);
+                .setMap(this.props.googlemaps);
         }
     }
 
     parseAndPlotNewGeoHashs() {
         // Now parse the new geohashs from textarea
         var geohashs = this
-            .state
+            .vars
             .geohashs
             .split("\n");
 
@@ -124,67 +124,77 @@ class GeoHashs extends Component {
 
         function showInfo(event) {
             var contentString = '<b>' + this.name + '</b>';
-            info_window.setContent(contentString);
-            info_window.setPosition(event.latLng);
-            info_window.open(googlemaps);
+            this
+                .info_window
+                .setContent(contentString);
+            this
+                .info_window
+                .setPosition(event.latLng);
+            this
+                .info_window
+                .open(this.props.googlemaps);
         }
 
-        // set state and plot new geoms on map
-        this.state.geohashsL = geohashsL;
-        this.state.geohashLabelsL = geohashLabelsL;
+        // set vars and plot new geoms on map
+        this.vars.geohashsL = geohashsL;
+        this.vars.geohashLabelsL = geohashLabelsL;
         this.plotGeomsOnMap();
     }
 
     renderNewGeoHashs() {
         this.removeGeomsFromMap();
-        // clear the geoms from state
-        this.state.geohashsL = [];
-        this.state.geohashLabelsL = [];
+        // clear the geoms
+        this.vars.geohashsL = [];
+        this.vars.geohashLabelsL = [];
         this.parseAndPlotNewGeoHashs();
     }
 
     removeGeomsFromMap() {
         // Remove currently plotted geohashs from map
 
-        if (info_window !== null) {
-            info_window.close();
-        }
-
-        for (var ind = 0; ind < this.state.geohashsL.length; ind++) {
+        if (this.info_window !== null) {
             this
-                .state
+                .info_window
+                .close();
+        }
+        for (var ind = 0; ind < this.vars.geohashsL.length; ind++) {
+            this
+                .vars
                 .geohashsL[ind]
                 .setMap(null);
         }
 
-        for (var ind = 0; ind < this.state.geohashLabelsL.length; ind++) {
+        for (ind = 0; ind < this.vars.geohashLabelsL.length; ind++) {
             this
-                .state
+                .vars
                 .geohashLabelsL[ind]
                 .setMap(null);
         }
     }
 
     updateInputValue(evt) {
-        this.state.geohashs = evt.target.value;
+        this.vars.geohashs = evt.target.value;
+    }
+
+    componentDidMount() {
+        this.plotGeomsOnMap();
     }
 
     componentWillUnmount() {
         this.removeGeomsFromMap();
         this
             .props
-            .updateState(this.props.name, this.state);
+            .updateVars(this.props.name, this.vars);
     }
 
     render() {
-        this.plotGeomsOnMap();
         return (
             <div className="GeoHashs-Div">
                 <h4>Geohashs</h4>
                 <textarea
                     rows="10"
                     cols="16"
-                    defaultValue={this.state.geohashs}
+                    defaultValue={this.vars.geohashs}
                     onChange={evt => this.updateInputValue(evt)}></textarea>
                 <div>
                     <button
