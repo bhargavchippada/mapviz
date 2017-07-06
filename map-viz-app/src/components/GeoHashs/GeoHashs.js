@@ -182,9 +182,6 @@ class GeoHashs extends Component {
 
     componentWillUnmount() {
         this.removeGeomsFromMap();
-        this
-            .props
-            .updateVars(this.props.name, this.vars);
     }
 
     render() {

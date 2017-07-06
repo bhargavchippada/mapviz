@@ -19,19 +19,6 @@ class Features extends Component {
         };
     }
 
-    updateVars(name, vars) {
-        switch (name) {
-            case "geohashs":
-                this.geohashs_vars = vars;
-                return;
-            case "bearings":
-                this.bearings_vars = vars;
-                return;
-            default:
-                alert("VARS: Invalid Component Name!");
-        }
-    }
-
     updateState(name, state) {
         switch (name) {
             default:
@@ -43,22 +30,10 @@ class Features extends Component {
         return (
             <div>
                 {this.props.feature === "geohashs"
-                    ? <GeoHashs
-                            name="geohashs"
-                            updateVars={this
-                            .updateVars
-                            .bind(this)}
-                            vars={this.geohashs_vars}
-                            googlemaps={this.props.googlemaps}/>
+                    ? <GeoHashs vars={this.geohashs_vars} googlemaps={this.props.googlemaps}/>
                     : null}
                 {this.props.feature === "bearings"
-                    ? <Bearings
-                            name="bearings"
-                            updateVars={this
-                            .updateVars
-                            .bind(this)}
-                            vars={this.bearings_vars}
-                            googlemaps={this.props.googlemaps}/>
+                    ? <Bearings vars={this.bearings_vars} googlemaps={this.props.googlemaps}/>
                     : null}
             </div>
         );
