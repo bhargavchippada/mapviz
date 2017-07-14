@@ -22,74 +22,100 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    mapboxgl.accessToken = 'pk.eyJ1IjoiYmhhcmdhdmNoaXBwYWRhIiwiYSI6ImNpcjF6ZG90cjAyeXpmcG1nMjlnbGZseHgifQ.7o' +
-        'OTXISE23jfe7TVxhM-zg';
+
+    this.center = [77.641877, 12.950488];
+    this.zoom = 15;
+    this.google = null;
+    this.mapbox = null;
 
     this.state = {
-      chosen_map: 'google',
       chosen_feature: 'geohashes',
-      google: new window
+      chosen_map: 'google'
+    };
+  }
+
+  hideMapLayers() {
+    document
+      .getElementById('googlemaps')
+      .style
+      .display = "none";
+    document
+      .getElementById('mapboxmaps')
+      .style
+      .display = "none";
+  }
+
+  getCenterAndZoom() {
+    if (this.google != null) {
+      var center = this
+        .google
+        .getCenter();
+      this.center = [
+        center.lng(),
+        center.lat()
+      ];
+      this.zoom = this.google.zoom;
+    }
+  }
+
+  renderGoogle() {
+    document
+      .getElementById('googlemaps')
+      .style
+      .display = "block";
+    if (this.google == null) {
+      this.google = new window
         .google
         .maps
         .Map(document.getElementById('googlemaps'), {
-          zoom: 16,
+          zoom: this.zoom,
           center: {
-            lat: 12.950488,
-            lng: 77.641877
+            lat: this.center[1],
+            lng: this.center[0]
           },
           zoomControl: true
-        }),
-      mapbox: new mapboxgl.Map({
+        });
+    }
+  }
+
+  renderMapbox() {
+    document
+      .getElementById('mapboxmaps')
+      .style
+      .display = "block";
+    if (this.mapbox == null) {
+      mapboxgl.accessToken = 'pk.eyJ1IjoiYmhhcmdhdmNoaXBwYWRhIiwiYSI6ImNpcjF6ZG90cjAyeXpmcG1nMjlnbGZseHgifQ.7o' +
+          'OTXISE23jfe7TVxhM-zg';
+      this.mapbox = new mapboxgl.Map({
         container: 'mapboxmaps',
         style: 'mapbox://styles/mapbox/streets-v9',
-        center: [
-          77.641877, 12.950488
-        ], // starting position
-        zoom: 15, // starting zoom
+        center: this.center,
+        zoom: this.zoom - 1,
         interactive: false
-      })
-    };
+      });
+    }
+    this
+      .mapbox
+      .setCenter(this.center);
+    this
+      .mapbox
+      .setZoom(this.google.zoom - 1);
   }
 
   displayMap(mapname) {
     switch (mapname) {
       case "google":
         {
-          document
-            .getElementById('googlemaps')
-            .style
-            .display = "block";
-          document
-            .getElementById('mapboxmaps')
-            .style
-            .display = "none";
+          this.getCenterAndZoom();
+          this.hideMapLayers();
+          this.renderGoogle();
           return;
         }
       case "mapbox":
         {
-          document
-            .getElementById('googlemaps')
-            .style
-            .display = "none";
-          document
-            .getElementById('mapboxmaps')
-            .style
-            .display = "block";
-          var center = this
-            .state
-            .google
-            .getCenter();
-          this
-            .state
-            .mapbox
-            .setCenter([
-              center.lng(),
-              center.lat()
-            ]);
-          this
-            .state
-            .mapbox
-            .setZoom(this.state.google.zoom - 1);
+          this.getCenterAndZoom();
+          this.hideMapLayers();
+          this.renderMapbox();
           return;
         }
       default:
@@ -97,8 +123,9 @@ class App extends Component {
     }
   }
 
-  selectMap(mapname) {
+  chooseMap(mapname) {
     this.setState({chosen_map: mapname});
+    this.displayMap(mapname);
   }
 
   selectFeature(feature) {
@@ -106,6 +133,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.displayMap(this.state.chosen_map);
     ReactDOM.render(
       <FeaturesNav
       feature={this.state.chosen_feature}
@@ -115,23 +143,22 @@ class App extends Component {
   }
 
   render() {
-    this.displayMap(this.state.chosen_map);
     return (
       <div>
-        <Features googlemaps={this.state.google} feature={this.state.chosen_feature}/>
+        <Features googlemaps={this.google} feature={this.state.chosen_feature}/>
         <div className="Choose-Map">
           <RadioBtn
             value="google"
             name="maptype"
             text="Google Maps"
             selected={this.state.chosen_map}
-            onChange={() => this.selectMap("google")}/>
+            onChange={() => this.chooseMap("google")}/>
           <RadioBtn
             value="mapbox"
             name="maptype"
             text="Mapbox Maps"
             selected={this.state.chosen_map}
-            onChange={() => this.selectMap("mapbox")}/>
+            onChange={() => this.chooseMap("mapbox")}/>
         </div>
       </div>
     );
